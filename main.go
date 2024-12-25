@@ -29,13 +29,14 @@ func startWindow() {
 
 	MainWindow{
 		Title:   "SrtComparator",
+		Icon:    "res/srt.ico",
 		MinSize: Size{Width: 600, Height: 400},
 		Layout:  VBox{},
 		Children: []Widget{
 			HSplitter{
 				Children: []Widget{
-					TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}},
-					TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}},
+					TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+					TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
 				},
 			},
 			HSplitter{
