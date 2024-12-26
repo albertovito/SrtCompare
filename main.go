@@ -35,32 +35,39 @@ func startWindow() {
 		Children: []Widget{
 			HSplitter{
 				Children: []Widget{
-					TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-					TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-				},
-			},
-			HSplitter{
-				Children: []Widget{
-					PushButton{
-						Text: "File1",
-						OnClicked: func() {
-							file1 = dialog.PrintDialog("")
-							text1, _ := os.ReadFile(file1)
-							outTE1.SetText(string(text1))
+					VSplitter{
+						Children: []Widget{
+							TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+							PushButton{
+								Text: "File1",
+								Font: Font{Family: "Calibri 14"},
+								OnClicked: func() {
+									file1 = dialog.PrintDialog("")
+									text1, _ := os.ReadFile(file1)
+									outTE1.SetText(string(text1))
+								},
+							},
 						},
 					},
-					PushButton{
-						Text: "File2",
-						OnClicked: func() {
-							file2 = dialog.PrintDialog("")
-							text2, _ := os.ReadFile(file2)
-							outTE2.SetText(string(text2))
+					VSplitter{
+						Children: []Widget{
+							TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+							PushButton{
+								Text: "File2",
+								Font: Font{Family: "Calibri 14"},
+								OnClicked: func() {
+									file2 = dialog.PrintDialog("")
+									text2, _ := os.ReadFile(file2)
+									outTE2.SetText(string(text2))
+								},
+							},
 						},
 					},
 				},
 			},
 			PushButton{
 				Text: "Compara",
+				Font: Font{Family: "Calibri 14"},
 				OnClicked: func() {
 					subtitles1, err := srt.ReadSRTFile(file1)
 					if err != nil {
@@ -74,7 +81,8 @@ func startWindow() {
 					}
 
 					// Crea il file CSV
-					csvFile, err := os.Create("sottotitoli.csv")
+					csvPath := dialog.GetSavePath("Salva file")
+					csvFile, err := os.Create(csvPath)
 					if err != nil {
 						fmt.Println("Errore nella creazione del file CSV:", err)
 						return

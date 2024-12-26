@@ -1,12 +1,14 @@
 package dialog
 
 import (
+	"strings"
+
 	"github.com/ncruces/zenity"
 )
 
 const TITOLO string = "Comparatore SRT"
 
-func PrintDialog(titolo string) (file string) {
+func PrintDialog(titolo string) string {
 	strings, _ := zenity.SelectFile(
 		zenity.Title(titolo),
 		zenity.Filename(""),
@@ -31,7 +33,7 @@ func MainPage() bool {
 	return err == nil
 }
 
-func SecondPage() (file1, file2 string) {
+func SecondPage() (string, string) {
 	firstFile := ""
 	secondFile := ""
 	err := zenity.Question("File da selezionare:", zenity.OKLabel("File1"), zenity.CancelLabel("File2"), zenity.Title("Comparatore SRT"), zenity.NoIcon)
@@ -46,4 +48,17 @@ func SecondPage() (file1, file2 string) {
 		secondFile = PrintDialog("Seleziona il secondo file")
 	}
 	return firstFile, secondFile
+}
+
+func GetSavePath(titolo string) string {
+	csvPath, _ := zenity.SelectFileSave(
+		zenity.Title(titolo),
+		zenity.Filename(""),
+		zenity.FileFilters{
+			{Name: "File CSV", Patterns: []string{"*.csv"}, CaseFold: false},
+		})
+	if !strings.Contains(csvPath, ".") {
+		csvPath = csvPath + ".csv"
+	}
+	return csvPath
 }
