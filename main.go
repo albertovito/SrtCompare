@@ -96,7 +96,7 @@ func startWindow() {
 					writer.Comma = ';'
 
 					// Scrivi l'intestazione del CSV
-					err = writer.Write([]string{"FILE1", "FILE2"})
+					err = writer.Write([]string{"#", "TIMECODE", "FILE1", "FILE2"})
 					if err != nil {
 						fmt.Println("Errore nel scrivere l'intestazione CSV:", err)
 						return
@@ -120,8 +120,10 @@ func startWindow() {
 
 						// Crea una riga per il CSV con il testo del sottotitolo per ogni file
 						record := []string{
-							srt.FormatSubtitle(&subtitle1),
-							srt.FormatSubtitle(&subtitle2),
+							fmt.Sprint(subtitle1.Index),
+							subtitle1.Start + " --->\n " + subtitle1.End,
+							subtitle1.Text,
+							subtitle2.Text,
 						}
 
 						// Scrivi la riga nel file CSV
