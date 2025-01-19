@@ -82,14 +82,14 @@ func startWindow() {
 						return
 					}
 
-					// Crea il file CSV
-					csvPath := dialog.GetSavePath("Salva file")
-					csvFile, err := os.Create(csvPath)
+					// Crea il file XLSX
+					filePath := dialog.GetSavePath("Salva file")
+					outputFile, err := os.Create(filePath)
 					if err != nil {
-						fmt.Println("Errore nella creazione del file CSV:", err)
+						fmt.Println("Errore nella creazione del file XLSX:", err)
 						return
 					}
-					defer csvFile.Close()
+					defer outputFile.Close()
 
 					file := excelize.NewFile()
 					defer func() {
@@ -104,13 +104,12 @@ func startWindow() {
 						return
 					}
 
-					// Scrivi i sottotitoli combinati nel CSV
 					maxLength := len(subtitles1)
 					if len(subtitles2) > maxLength {
 						maxLength = len(subtitles2)
 					}
 
-					// Scrivi le righe del CSV
+					// Scrivi le righe della tabella
 					for i := 0; i < maxLength; i++ {
 						var subtitle1, subtitle2 srt.Subtitle
 						if i < len(subtitles1) {
@@ -131,8 +130,8 @@ func startWindow() {
 
 					}
 					file.SetActiveSheet(index)
-					// Scrivi la riga nel file CSV
-					if err := file.SaveAs(csvPath); err != nil {
+					// Scrivi la riga nel file XLSX
+					if err := file.SaveAs(filePath); err != nil {
 						fmt.Println(err)
 					}
 					zenity.Info("File generato correttamente :)", zenity.Title("Comparatore SRT"), zenity.NoIcon)

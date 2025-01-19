@@ -51,14 +51,14 @@ func SecondPage() (string, string) {
 }
 
 func GetSavePath(titolo string) string {
-	csvPath, _ := zenity.SelectFileSave(
+	filePath, _ := zenity.SelectFileSave(
 		zenity.Title(titolo),
 		zenity.Filename(""),
 		zenity.FileFilters{
-			{Name: "File CSV", Patterns: []string{"*.xlsx"}, CaseFold: false},
+			{Name: "File XLSX", Patterns: []string{"*.xlsx"}, CaseFold: false},
 		})
-	if !strings.Contains(csvPath, ".") {
-		csvPath = csvPath + ".xlsx"
+	if !strings.Contains(filePath, ".") {
+		filePath = filePath + ".xlsx"
 	}
-	return csvPath
+	return filePath
 }
