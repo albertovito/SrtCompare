@@ -24,7 +24,6 @@ require (
 	github.com/josephspurrier/goversioninfo v1.4.1 // indirect
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect
 	github.com/randall77/makefat v0.0.0-20210315173500-7ddd0e42c844 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/xuri/excelize/v2 v2.9.0
 	golang.org/x/image v0.20.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
