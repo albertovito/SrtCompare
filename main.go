@@ -5,13 +5,13 @@ package main
 import (
 	"SrtComparator/dialog"
 	"SrtComparator/srt"
-	"encoding/csv"
 	"fmt"
 	"os"
 
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"github.com/ncruces/zenity"
+	"github.com/xuri/excelize/v2"
 )
 
 func main() {
@@ -91,14 +91,16 @@ func startWindow() {
 					}
 					defer csvFile.Close()
 
-					// Crea un writer CSV con separatore ';'
-					writer := csv.NewWriter(csvFile)
-					writer.Comma = ';'
-
-					// Scrivi l'intestazione del CSV
-					err = writer.Write([]string{"#", "TIMECODE", "FILE1", "FILE2"})
+					file := excelize.NewFile()
+					defer func() {
+						if err := file.Close(); err != nil {
+							fmt.Println(err)
+						}
+					}()
+					sheet := "Sheet1"
+					index, err := file.NewSheet(sheet)
 					if err != nil {
-						fmt.Println("Errore nel scrivere l'intestazione CSV:", err)
+						fmt.Println(err)
 						return
 					}
 
@@ -118,31 +120,21 @@ func startWindow() {
 							subtitle2 = subtitles2[i]
 						}
 
-						// Crea una riga per il CSV con il testo del sottotitolo per ogni file
-						record := []string{
-							fmt.Sprint(subtitle1.Index),
-							subtitle1.Start + " --->\n " + subtitle1.End,
-							subtitle1.Text,
-							subtitle2.Text,
-						}
+						a := "A" + fmt.Sprint(i+1)
+						b := "B" + fmt.Sprint(i+1)
+						c := "C" + fmt.Sprint(i+1)
+						d := "D" + fmt.Sprint(i+1)
+						file.SetCellValue(sheet, a, subtitle1.Index)
+						file.SetCellValue(sheet, b, subtitle1.Start+" --->\n "+subtitle1.End)
+						file.SetCellValue(sheet, c, subtitle1.Text)
+						file.SetCellValue(sheet, d, subtitle2.Text)
 
-						// Scrivi la riga nel file CSV
-						err = writer.Write(record)
-						if err != nil {
-							fmt.Println("Errore nel scrivere una riga nel CSV:", err)
-							return
-						}
 					}
-
-					// Salva tutte le righe nel CSV
-					writer.Flush()
-
-					// Verifica se ci sono errori nel flush
-					if err := writer.Error(); err != nil {
-						fmt.Println("Errore nel flush del file CSV:", err)
-						return
+					file.SetActiveSheet(index)
+					// Scrivi la riga nel file CSV
+					if err := file.SaveAs(csvPath); err != nil {
+						fmt.Println(err)
 					}
-
 					zenity.Info("File generato correttamente :)", zenity.Title("Comparatore SRT"), zenity.NoIcon)
 					os.Exit(0)
 				},

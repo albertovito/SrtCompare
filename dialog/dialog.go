@@ -55,10 +55,10 @@ func GetSavePath(titolo string) string {
 		zenity.Title(titolo),
 		zenity.Filename(""),
 		zenity.FileFilters{
-			{Name: "File CSV", Patterns: []string{"*.csv"}, CaseFold: false},
+			{Name: "File CSV", Patterns: []string{"*.xlsx"}, CaseFold: false},
 		})
 	if !strings.Contains(csvPath, ".") {
-		csvPath = csvPath + ".csv"
+		csvPath = csvPath + ".xlsx"
 	}
 	return csvPath
 }
