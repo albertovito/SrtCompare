@@ -26,6 +26,7 @@ SrtCompare is a Windows desktop application written in Go that helps you compare
    - File1: Content from the first subtitle file
    - File2: Content from the second subtitle file
 
+![Screen](./res/SrtCompare_screen.png)
 ## Generated Excel Format
 
 The output Excel file will have the following structure:
