@@ -1,0 +1,92 @@
+﻿1
+00:00:00,000 --> 00:00:03,000
+[INTERNO NAVICELLA SPAZIALE - NOTTE]
+[Suono di allarme intermittente]
+[MARK]  [Spaventato] Cosa diavolo...?!
+
+2
+00:00:03,500 --> 00:00:06,000
+[Mark si alza di scatto dal letto e corre verso il pannello di controllo]
+[Suono di passi pesanti]
+
+3
+00:00:06,500 --> 00:00:09,000
+[Pannello di controllo]  [Luci lampeggianti] Sistema di supporto vitale critico!
+
+4
+00:00:09,500 --> 00:00:12,000
+[Mark]  [Sudato, preoccupato]  Devo risolvere questo problema in fretta!
+
+5
+00:00:12,500 --> 00:00:15,000
+[Mark inizia a premere freneticamente i pulsanti]
+[Suono di tasti che vengono premuti]
+
+6
+00:00:15,500 --> 00:00:18,000
+[Mark]  [Frustrato]  Accidenti, niente!
+
+7
+00:00:18,500 --> 00:00:21,000
+[Suono di un allarme più forte]
+[Mark]  [Paura]  No, no, no!
+
+8
+00:00:21,500 --> 00:00:24,000
+[Mark guarda fuori dal finestrino]
+[Spazio esterno]  [Stelle scintillanti]  Sono solo...
+
+9
+00:00:24,500 --> 00:00:27,000
+[Mark si siede e appoggia la testa tra le mani]
+[Suono di un respiro profondo]
+
+10
+00:00:27,500 --> 00:00:30,000
+[Mark]  [Determinato]  Ce la farò. Devo trovare una soluzione.
+
+11
+00:00:30,500 --> 00:00:33,000
+[Mark si alza e ricomincia a lavorare al pannello di controllo]
+[Suono di tasti che vengono premuti]
+
+12
+00:00:33,500 --> 00:00:36,000
+[Pannello di controllo]  [Luci si spengono, poi si riaccendono]  Sistema ripristinato!
+
+13
+00:00:36,500 --> 00:00:39,000
+[Mark]  [Sollievo]  Ce l'ho fatta!
+
+14
+00:00:39,500 --> 00:00:42,000
+[Suono di una melodia rilassante]
+[Mark sorride e guarda fuori dal finestrino]
+
+15
+00:00:42,500 --> 00:00:45,000
+[Spazio esterno]  [Nebulosa colorata]  Che spettacolo!
+
+16
+00:00:45,500 --> 00:00:48,000
+[Mark prende un taccuino e una penna]
+[Suono di pagine che sfogliano]
+
+17
+00:00:48,500 --> 00:00:51,000
+[Mark inizia a scrivere]
+[Pensiero di Mark]  [Voce interna]  Devo annotare tutto questo...
+
+18
+00:00:51,500 --> 00:00:54,000
+[Mark sorride]
+[Pensiero di Mark]  [Voce interna]  Chi lo avrebbe mai detto?
+
+19
+00:00:54,500 --> 00:00:57,000
+[Scena finale: Mark guarda la Terra dalla finestra]
+[Terra]  [Piccolo punto blu]  Casa...
+
+20
+00:00:57,500 --> 00:00:60,000
+[Suono di una melodia nostalgica]

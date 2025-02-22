@@ -1,0 +1,92 @@
+﻿1
+00:00:00,000 --> 00:00:03,000
+[INSIDE SPACESHIP - NIGHT]
+[Sound of intermittent alarm]
+[MARK]  [Scared] What the hell...?
+
+2
+00:00:03,500 --> 00:00:06,000
+[Mark jumps out of bed and runs towards the control panel]
+[Sound of heavy footsteps]
+
+3
+00:00:06,500 --> 00:00:09,000
+[Control panel]  [Flashing lights] Critical life support system!
+
+4
+00:00:09,500 --> 00:00:12,000
+[Mark]  [Sweaty, worried]  I need to fix this fast!
+
+5
+00:00:12,500 --> 00:00:15,000
+[Mark starts pressing buttons frantically]
+[Sound of buttons being pressed]
+
+6
+00:00:15,500 --> 00:00:18,000
+[Mark]  [Frustrated]  Damn it!
+
+7
+00:00:18,500 --> 00:00:21,000
+[Sound of louder alarm]
+[Mark]  [Fear]  No, no, no!
+
+8
+00:00:21,500 --> 00:00:24,000
+[Mark looks out the window]
+[Outer space]  [Twinkling stars]  I'm all alone...
+
+9
+00:00:24,500 --> 00:00:27,000
+[Mark sits down and rests his head in his hands]
+[Sound of deep breath]
+
+10
+00:00:27,500 --> 00:00:30,000
+[Mark]  [Determined]  I can do this. I have to find a solution.
+
+11
+00:00:30,500 --> 00:00:33,000
+[Mark gets up and starts working on the control panel again]
+[Sound of buttons being pressed]
+
+12
+00:00:33,500 --> 00:00:36,000
+[Control panel]  [Lights turn off, then back on]  System restored!
+
+13
+00:00:36,500 --> 00:00:39,000
+[Mark]  [Relief]  I did it!
+
+14
+00:00:39,500 --> 00:00:42,000
+[Sound of a relaxing melody]
+[Mark smiles and looks out the window]
+
+15
+00:00:42,500 --> 00:00:45,000
+[Outer space]  [Colorful nebula]  What a view!
+
+16
+00:00:45,500 --> 00:00:48,000
+[Mark takes a notebook and a pen]
+[Sound of pages turning]
+
+17
+00:00:48,500 --> 00:00:51,000
+[Mark starts writing]
+[Mark's thought]  [Internal voice]  I have to write this all down...
+
+18
+00:00:51,500 --> 00:00:54,000
+[Mark smiles]
+[Mark's thought]  [Internal voice]  Who would have thought?
+
+19
+00:00:54,500 --> 00:00:57,000
+[Final scene: Mark looks at Earth from the window]
+[Earth]  [Small blue dot]  Home...
+
+20
+00:00:57,500 --> 00:00:60,000
+[Sound of a nostalgic melody]
