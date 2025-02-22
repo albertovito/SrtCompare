@@ -21,13 +21,10 @@ const (
 )
 
 func main() {
-	startWindow()
-}
-
-func startWindow() {
 	var outTE1, outTE2 *walk.TextEdit
 	var file1, file2 string
 
+	// Dichiarazione della finestra principale
 	declarative.MainWindow{
 		Title:   APPTITLE,
 		Icon:    ICON,
@@ -43,7 +40,7 @@ func startWindow() {
 								Text: "File1",
 								Font: declarative.Font{Family: FONT},
 								OnClicked: func() {
-									file1 = dialog.PrintDialog("")
+									file1 = dialog.SelectFile("")
 									text1, _ := os.ReadFile(file1)
 									outTE1.SetText(string(text1))
 								},
@@ -57,7 +54,7 @@ func startWindow() {
 								Text: "File2",
 								Font: declarative.Font{Family: FONT},
 								OnClicked: func() {
-									file2 = dialog.PrintDialog("")
+									file2 = dialog.SelectFile("")
 									text2, _ := os.ReadFile(file2)
 									outTE2.SetText(string(text2))
 								},
@@ -70,73 +67,77 @@ func startWindow() {
 				Text: "Compara",
 				Font: declarative.Font{Family: FONT},
 				OnClicked: func() {
-					subtitles1, err := srt.ReadSRTFile(file1)
-					if err != nil {
-						fmt.Println("Errore nel leggere il primo file SRT:", err)
-						return
-					}
-					subtitles2, err := srt.ReadSRTFile(file2)
-					if err != nil {
-						fmt.Println("Errore nel leggere il secondo file SRT:", err)
-						return
-					}
-
-					// Crea il file XLSX
-					filePath := dialog.GetSavePath("Salva file")
-					outputFile, err := os.Create(filePath)
-					if err != nil {
-						fmt.Println("Errore nella creazione del file XLSX:", err)
-						return
-					}
-					defer outputFile.Close()
-
-					file := excelize.NewFile()
-					defer func() {
-						if err := file.Close(); err != nil {
-							fmt.Println(err)
-						}
-					}()
-					sheet := "Sheet1"
-					index, err := file.NewSheet(sheet)
-					if err != nil {
-						fmt.Println(err)
-						return
-					}
-
-					maxLength := len(subtitles1)
-					if len(subtitles2) > maxLength {
-						maxLength = len(subtitles2)
-					}
-
-					// Scrivi le righe della tabella
-					for i := 0; i < maxLength; i++ {
-						var subtitle1, subtitle2 srt.Subtitle
-						if i < len(subtitles1) {
-							subtitle1 = subtitles1[i]
-						}
-						if i < len(subtitles2) {
-							subtitle2 = subtitles2[i]
-						}
-
-						a := "A" + fmt.Sprint(i+1)
-						b := "B" + fmt.Sprint(i+1)
-						c := "C" + fmt.Sprint(i+1)
-						d := "D" + fmt.Sprint(i+1)
-						file.SetCellValue(sheet, a, subtitle1.Index)
-						file.SetCellValue(sheet, b, subtitle1.Start+" --->\n "+subtitle1.End)
-						file.SetCellValue(sheet, c, subtitle1.Text)
-						file.SetCellValue(sheet, d, subtitle2.Text)
-
-					}
-					file.SetActiveSheet(index)
-					// Scrivi la riga nel file XLSX
-					if err := file.SaveAs(filePath); err != nil {
-						fmt.Println(err)
-					}
-					zenity.Info("File generato correttamente", zenity.Title("Comparatore SRT"), zenity.NoIcon)
-					os.Exit(0)
+					generate(file1, file2)
 				},
 			},
 		},
 	}.Run()
+}
+
+func generate(file1, file2 string) {
+	subtitles1, err := srt.ReadSRTFile(file1)
+	if err != nil {
+		fmt.Println("Errore nel leggere il primo file SRT:", err)
+		return
+	}
+	subtitles2, err := srt.ReadSRTFile(file2)
+	if err != nil {
+		fmt.Println("Errore nel leggere il secondo file SRT:", err)
+		return
+	}
+
+	// Crea il file XLSX
+	filePath := dialog.GetSavePath("Salva file")
+	outputFile, err := os.Create(filePath)
+	if err != nil {
+		fmt.Println("Errore nella creazione del file XLSX:", err)
+		return
+	}
+	defer outputFile.Close()
+
+	file := excelize.NewFile()
+	defer func() {
+		if err := file.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	sheet := "Sheet1"
+	index, err := file.NewSheet(sheet)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	maxLength := len(subtitles1)
+	if len(subtitles2) > maxLength {
+		maxLength = len(subtitles2)
+	}
+
+	// Scrivi le righe della tabella
+	for i := 0; i < maxLength; i++ {
+		var subtitle1, subtitle2 srt.Subtitle
+		if i < len(subtitles1) {
+			subtitle1 = subtitles1[i]
+		}
+		if i < len(subtitles2) {
+			subtitle2 = subtitles2[i]
+		}
+
+		a := "A" + fmt.Sprint(i+1)
+		b := "B" + fmt.Sprint(i+1)
+		c := "C" + fmt.Sprint(i+1)
+		d := "D" + fmt.Sprint(i+1)
+		file.SetCellValue(sheet, a, subtitle1.Index)
+		file.SetCellValue(sheet, b, subtitle1.Start+" --->\n "+subtitle1.End)
+		file.SetCellValue(sheet, c, subtitle1.Text)
+		file.SetCellValue(sheet, d, subtitle2.Text)
+
+	}
+	file.SetActiveSheet(index)
+	// Scrivi la riga nel file XLSX
+	if err := file.SaveAs(filePath); err != nil {
+		fmt.Println(err)
+	}
+	zenity.Info("File generato correttamente", zenity.Title(APPTITLE), zenity.NoIcon)
+	os.Exit(0)
 }

@@ -1,1 +1,1 @@
-# SrtComparator
+# SrtCompare
