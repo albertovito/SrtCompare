@@ -14,15 +14,14 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func main() {
-	// Leggi i sottotitoli da due file SRT
-	res := dialog.MainPage()
-	if !res {
-		return
-	}
-	// file1, file2 := dialog.SecondPage()
-	startWindow()
+const (
+	APPTITLE = "SrtCompare"
+	FONT     = "Calibri 14"
+	ICON     = "res/srt.ico"
+)
 
+func main() {
+	startWindow()
 }
 
 func startWindow() {
@@ -30,8 +29,8 @@ func startWindow() {
 	var file1, file2 string
 
 	MainWindow{
-		Title:   "SrtComparator",
-		Icon:    "res/srt.ico",
+		Title:   APPTITLE,
+		Icon:    ICON,
 		MinSize: Size{Width: 600, Height: 400},
 		Layout:  VBox{},
 		Children: []Widget{
@@ -39,10 +38,10 @@ func startWindow() {
 				Children: []Widget{
 					VSplitter{
 						Children: []Widget{
-							TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+							TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: FONT}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
 							PushButton{
 								Text: "File1",
-								Font: Font{Family: "Calibri 14"},
+								Font: Font{Family: FONT},
 								OnClicked: func() {
 									file1 = dialog.PrintDialog("")
 									text1, _ := os.ReadFile(file1)
@@ -53,10 +52,10 @@ func startWindow() {
 					},
 					VSplitter{
 						Children: []Widget{
-							TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: "Calibri 14"}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+							TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: FONT}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
 							PushButton{
 								Text: "File2",
-								Font: Font{Family: "Calibri 14"},
+								Font: Font{Family: FONT},
 								OnClicked: func() {
 									file2 = dialog.PrintDialog("")
 									text2, _ := os.ReadFile(file2)
@@ -69,7 +68,7 @@ func startWindow() {
 			},
 			PushButton{
 				Text: "Compara",
-				Font: Font{Family: "Calibri 14"},
+				Font: Font{Family: FONT},
 				OnClicked: func() {
 					subtitles1, err := srt.ReadSRTFile(file1)
 					if err != nil {
@@ -134,7 +133,7 @@ func startWindow() {
 					if err := file.SaveAs(filePath); err != nil {
 						fmt.Println(err)
 					}
-					zenity.Info("File generato correttamente :)", zenity.Title("Comparatore SRT"), zenity.NoIcon)
+					zenity.Info("File generato correttamente", zenity.Title("Comparatore SRT"), zenity.NoIcon)
 					os.Exit(0)
 				},
 			},
