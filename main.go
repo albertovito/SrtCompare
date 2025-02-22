@@ -42,7 +42,7 @@ func main() {
 								Text: "File1",
 								Font: declarative.Font{Family: FONT},
 								OnClicked: func() {
-									file1 = dialog.SelectFile("")
+									file1 = dialog.SelectFile("Open File1")
 									text1, _ := os.ReadFile(file1)
 									outTE1.SetText(string(text1))
 								},
@@ -57,7 +57,7 @@ func main() {
 								Text: "File2",
 								Font: declarative.Font{Family: FONT},
 								OnClicked: func() {
-									file2 = dialog.SelectFile("")
+									file2 = dialog.SelectFile("Open File2")
 									text2, _ := os.ReadFile(file2)
 									outTE2.SetText(string(text2))
 								},
@@ -69,7 +69,7 @@ func main() {
 
 			// Bottone di conferma
 			declarative.PushButton{
-				Text: "Compara",
+				Text: "Generate",
 				Font: declarative.Font{Family: FONT},
 				OnClicked: func() {
 					generate(file1, file2)
@@ -92,7 +92,7 @@ func generate(file1, file2 string) {
 	}
 
 	// Crea il file XLSX
-	filePath := dialog.GetSavePath("Salva file")
+	filePath := dialog.GetSavePath("Save file")
 	outputFile, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println("Errore nella creazione del file XLSX:", err)
@@ -147,6 +147,6 @@ func generate(file1, file2 string) {
 	if err := file.SaveAs(filePath); err != nil {
 		fmt.Println(err)
 	}
-	zenity.Info("File generato correttamente", zenity.Title(APPTITLE), zenity.NoIcon)
+	zenity.Info("File generated successfully", zenity.Title(APPTITLE), zenity.NoIcon)
 	os.Exit(0)
 }
