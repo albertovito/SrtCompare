@@ -57,7 +57,7 @@ go build -ldflags="-H windowsgui"
 
 ## Dependencies
 
-- [zenity](https://github.com/ncruces/zenity)
+- [zenity](https://github.com/ncruces/zenity) - Cross Platfor library for system dialogs
 - [walk](https://github.com/lxn/walk) - Windows GUI toolkit
 - [excelize](https://github.com/qax-os/excelize) - Excel file manipulation
 
