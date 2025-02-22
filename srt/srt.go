@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Struttura per memorizzare un sottotitolo
+// Structure for storing a subtitle
 type Subtitle struct {
 	Index int
 	Start string
@@ -16,62 +16,62 @@ type Subtitle struct {
 	Text  string
 }
 
-// Funzione per leggere i file SRT e restituire un array di sottotitoli
+// Function to read SRT files and return an array of subtitles
 func ReadSRTFile(filename string) ([]Subtitle, error) {
-	// Apri il file SRT
+	// Open the SRT file
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	// Scanner per leggere il file riga per riga
+	// Scanner to read the file line by line
 	scanner := bufio.NewScanner(file)
 
-	// Variabili per gestire la lettura
+	// Variables to manage reading
 	var subtitles []Subtitle
 	var currentSubtitle Subtitle
 	var currentText []string
 
-	// Regex per identificare i timestamp
+	// Regex to identify timestamps
 	timestampRegex := regexp.MustCompile(`(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})`)
 
-	// Leggi il file riga per riga
+	// Read the file line by line
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = strings.Replace(line, "\ufeff", "", 1)
 		line = strings.Replace(line, ";", ".", 1)
-		// Se la riga è vuota, significa che il sottotitolo è completo
+		// If the line is empty, it means the subtitle is complete
 		if line == "" {
 			if currentSubtitle.Index > 0 {
-				// Aggiungi il sottotitolo completo alla lista
+				// Add the full subtitle to the list
 				currentSubtitle.Text = strings.Join(currentText, "\n")
 				subtitles = append(subtitles, currentSubtitle)
 			}
 
-			// Resetta per il prossimo sottotitolo
+			// Reset for next subtitle
 			currentText = nil
 			currentSubtitle = Subtitle{}
 		} else if currentSubtitle.Index == 0 {
-			// Prima riga: indice del sottotitolo
+			// First line: subtitle index
 			fmt.Sscanf(line, "%d", &currentSubtitle.Index)
 		} else if timestampRegex.MatchString(line) {
-			// Seconda riga: timestamp (Start --> End)
+			// Second line: timestamp (Start --> End)
 			matches := timestampRegex.FindStringSubmatch(line)
 			currentSubtitle.Start = matches[1]
 			currentSubtitle.End = matches[2]
 		} else {
-			// Righe successive: testo del sottotitolo
+			// Next lines: subtitle text
 			currentText = append(currentText, line)
 		}
 	}
 
-	// Gestione errori durante la lettura
+	// Error handling during reading
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
-	// Gestisci l'ultimo sottotitolo se manca l'ultima riga vuota
+	// Handle last subtitle if last blank line is missing
 	if currentSubtitle.Index > 0 {
 		currentSubtitle.Text = strings.Join(currentText, "\n")
 		subtitles = append(subtitles, currentSubtitle)
@@ -80,11 +80,11 @@ func ReadSRTFile(filename string) ([]Subtitle, error) {
 	return subtitles, nil
 }
 
-// Funzione per formattare il sottotitolo come testo completo
+// Function to format the subtitle as full text
 func FormatSubtitle(subtitle *Subtitle) string {
-	// Unifica il sottotitolo come una singola stringa
+	// Unifies the subtitle as a single string
 	if subtitle.Index == 0 {
-		return "" // Non scrivere nulla se non ci sono sottotitoli
+		return "" // Don't write anything if there are no subtitles
 	}
 	return fmt.Sprintf("%s\n%s --> %s\n%s", fmt.Sprint(subtitle.Index), subtitle.Start, subtitle.End, subtitle.Text)
 }

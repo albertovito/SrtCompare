@@ -6,7 +6,7 @@ import (
 	"github.com/ncruces/zenity"
 )
 
-// Funzione per selezionare il percorso di un file
+// Function to select the path of a file
 func SelectFile(titolo string) string {
 	strings, _ := zenity.SelectFile(
 		zenity.Title(titolo),
@@ -17,7 +17,7 @@ func SelectFile(titolo string) string {
 	return strings
 }
 
-// Funzione per selezionare il percorso dove salvare il file elaborato
+// Function to select the path where to save the processed file
 func GetSavePath(titolo string) string {
 	filePath, _ := zenity.SelectFileSave(
 		zenity.Title(titolo),

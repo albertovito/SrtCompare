@@ -24,20 +24,20 @@ func main() {
 	var outTE1, outTE2 *walk.TextEdit
 	var file1, file2 string
 
-	// Dichiarazione della finestra principale
+	// Declaration of the main window
 	declarative.MainWindow{
 		Title:   APPTITLE,
 		Icon:    ICON,
 		MinSize: declarative.Size{Width: 600, Height: 400},
 		Layout:  declarative.VBox{},
 		Children: []declarative.Widget{
-			// Area principale dove verranno stamparti i contenuti dei due file man mano che vengono caricati
+			// Main area where the contents of the two files will be printed as they are loaded
 			declarative.HSplitter{
 				Children: []declarative.Widget{
 					declarative.VSplitter{
 						Children: []declarative.Widget{
 							declarative.TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: declarative.Font{Family: FONT}, Background: declarative.SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-							// Bottone per selezionare il file2
+							// Button to select the file1
 							declarative.PushButton{
 								Text: "File1",
 								Font: declarative.Font{Family: FONT},
@@ -52,7 +52,7 @@ func main() {
 					declarative.VSplitter{
 						Children: []declarative.Widget{
 							declarative.TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: declarative.Font{Family: FONT}, Background: declarative.SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-							// Bottone per selezionare il file2
+							// Button to select the file2
 							declarative.PushButton{
 								Text: "File2",
 								Font: declarative.Font{Family: FONT},
@@ -67,7 +67,7 @@ func main() {
 				},
 			},
 
-			// Bottone di conferma
+			// Generation button
 			declarative.PushButton{
 				Text: "Generate",
 				Font: declarative.Font{Family: FONT},
@@ -82,20 +82,20 @@ func main() {
 func generate(file1, file2 string) {
 	subtitles1, err := srt.ReadSRTFile(file1)
 	if err != nil {
-		fmt.Println("Errore nel leggere il primo file SRT:", err)
+		fmt.Println("Error reading first SRT file:", err)
 		return
 	}
 	subtitles2, err := srt.ReadSRTFile(file2)
 	if err != nil {
-		fmt.Println("Errore nel leggere il secondo file SRT:", err)
+		fmt.Println("Error reading secod SRT file:", err)
 		return
 	}
 
-	// Crea il file XLSX
+	// Create the XLSX file
 	filePath := dialog.GetSavePath("Save file")
 	outputFile, err := os.Create(filePath)
 	if err != nil {
-		fmt.Println("Errore nella creazione del file XLSX:", err)
+		fmt.Println("Error creating XLSX file:", err)
 		return
 	}
 	defer outputFile.Close()
@@ -118,12 +118,12 @@ func generate(file1, file2 string) {
 		maxLength = len(subtitles2)
 	}
 
-	// Scrivo la prima riga della tabella
+	// Writes the first row of the table
 	file.SetCellValue(sheet, "A1", "Index")
 	file.SetCellValue(sheet, "B1", "Timing")
 	file.SetCellValue(sheet, "C1", "File1")
 	file.SetCellValue(sheet, "D1", "File2")
-	// Scrivi le righe della tabella
+	// Writes the table rows
 	for i := 0; i < maxLength; i++ {
 		var subtitle1, subtitle2 srt.Subtitle
 		if i < len(subtitles1) {
@@ -143,7 +143,7 @@ func generate(file1, file2 string) {
 
 	}
 	file.SetActiveSheet(index)
-	// Scrivi la riga nel file XLSX
+	// Writes the line to the XLSX file
 	if err := file.SaveAs(filePath); err != nil {
 		fmt.Println(err)
 	}
