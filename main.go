@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/lxn/walk"
-	. "github.com/lxn/walk/declarative"
+	"github.com/lxn/walk/declarative"
 	"github.com/ncruces/zenity"
 	"github.com/xuri/excelize/v2"
 )
@@ -28,20 +28,20 @@ func startWindow() {
 	var outTE1, outTE2 *walk.TextEdit
 	var file1, file2 string
 
-	MainWindow{
+	declarative.MainWindow{
 		Title:   APPTITLE,
 		Icon:    ICON,
-		MinSize: Size{Width: 600, Height: 400},
-		Layout:  VBox{},
-		Children: []Widget{
-			HSplitter{
-				Children: []Widget{
-					VSplitter{
-						Children: []Widget{
-							TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: Font{Family: FONT}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-							PushButton{
+		MinSize: declarative.Size{Width: 600, Height: 400},
+		Layout:  declarative.VBox{},
+		Children: []declarative.Widget{
+			declarative.HSplitter{
+				Children: []declarative.Widget{
+					declarative.VSplitter{
+						Children: []declarative.Widget{
+							declarative.TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: declarative.Font{Family: FONT}, Background: declarative.SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+							declarative.PushButton{
 								Text: "File1",
-								Font: Font{Family: FONT},
+								Font: declarative.Font{Family: FONT},
 								OnClicked: func() {
 									file1 = dialog.PrintDialog("")
 									text1, _ := os.ReadFile(file1)
@@ -50,12 +50,12 @@ func startWindow() {
 							},
 						},
 					},
-					VSplitter{
-						Children: []Widget{
-							TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: Font{Family: FONT}, Background: SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-							PushButton{
+					declarative.VSplitter{
+						Children: []declarative.Widget{
+							declarative.TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: declarative.Font{Family: FONT}, Background: declarative.SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
+							declarative.PushButton{
 								Text: "File2",
-								Font: Font{Family: FONT},
+								Font: declarative.Font{Family: FONT},
 								OnClicked: func() {
 									file2 = dialog.PrintDialog("")
 									text2, _ := os.ReadFile(file2)
@@ -66,9 +66,9 @@ func startWindow() {
 					},
 				},
 			},
-			PushButton{
+			declarative.PushButton{
 				Text: "Compara",
-				Font: Font{Family: FONT},
+				Font: declarative.Font{Family: FONT},
 				OnClicked: func() {
 					subtitles1, err := srt.ReadSRTFile(file1)
 					if err != nil {
