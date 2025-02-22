@@ -11,7 +11,7 @@ SrtCompare is a Windows desktop application written in Go that helps you compare
 
 ## Installation
 
-1. Download the latest release from the [releases page](https://github.com/vitoalbe/SrtCompare/releases)
+1. Download the latest release from the [releases](https://github.com/albertovito/SrtCompare/releases)
 2. Run the executable - no installation required
 
 ## Usage
