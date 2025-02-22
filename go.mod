@@ -1,4 +1,4 @@
-module SrtComparator
+module SrtCompare
 
 go 1.23
 

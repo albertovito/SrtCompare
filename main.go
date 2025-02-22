@@ -3,8 +3,8 @@
 package main
 
 import (
-	"SrtComparator/dialog"
-	"SrtComparator/srt"
+	"SrtCompare/dialog"
+	"SrtCompare/srt"
 	"fmt"
 	"os"
 
