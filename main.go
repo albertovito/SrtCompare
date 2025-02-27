@@ -1,152 +1,293 @@
-//go:build windows
-
 package main
 
 import (
 	"SrtCompare/dialog"
 	"SrtCompare/srt"
 	"fmt"
+	"image/color"
 	"os"
 
-	"github.com/lxn/walk"
-	"github.com/lxn/walk/declarative"
+	"gioui.org/app"
+	"gioui.org/layout"
+	"gioui.org/op"
+	"gioui.org/unit"
+	"gioui.org/widget"
+	"gioui.org/widget/material"
 	"github.com/ncruces/zenity"
 	"github.com/xuri/excelize/v2"
 )
 
 const (
 	APPTITLE = "SrtCompare"
-	FONT     = "Calibri 14"
-	ICON     = "res/srt.ico"
 )
 
-func main() {
-	var outTE1, outTE2 *walk.TextEdit
-	var file1, file2 string
-
-	// Declaration of the main window
-	declarative.MainWindow{
-		Title:   APPTITLE,
-		Icon:    ICON,
-		MinSize: declarative.Size{Width: 600, Height: 400},
-		Layout:  declarative.VBox{},
-		Children: []declarative.Widget{
-			// Main area where the contents of the two files will be printed as they are loaded
-			declarative.HSplitter{
-				Children: []declarative.Widget{
-					declarative.VSplitter{
-						Children: []declarative.Widget{
-							declarative.TextEdit{AssignTo: &outTE1, ReadOnly: true, VScroll: true, Font: declarative.Font{Family: FONT}, Background: declarative.SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-							// Button to select the file1
-							declarative.PushButton{
-								Text: "File1",
-								Font: declarative.Font{Family: FONT},
-								OnClicked: func() {
-									file1 = dialog.SelectFile("Open File1")
-									text1, _ := os.ReadFile(file1)
-									outTE1.SetText(string(text1))
-								},
-							},
-						},
-					},
-					declarative.VSplitter{
-						Children: []declarative.Widget{
-							declarative.TextEdit{AssignTo: &outTE2, ReadOnly: true, VScroll: true, Font: declarative.Font{Family: FONT}, Background: declarative.SolidColorBrush{Color: walk.RGB(255, 255, 255)}},
-							// Button to select the file2
-							declarative.PushButton{
-								Text: "File2",
-								Font: declarative.Font{Family: FONT},
-								OnClicked: func() {
-									file2 = dialog.SelectFile("Open File2")
-									text2, _ := os.ReadFile(file2)
-									outTE2.SetText(string(text2))
-								},
-							},
-						},
-					},
-				},
-			},
-
-			// Generation button
-			declarative.PushButton{
-				Text: "Generate",
-				Font: declarative.Font{Family: FONT},
-				OnClicked: func() {
-					generate(file1, file2)
-				},
-			},
-		},
-	}.Run()
+type UI struct {
+	th               *material.Theme
+	file1ButtonOp    *widget.Clickable
+	file2ButtonOp    *widget.Clickable
+	generateButtonOp *widget.Clickable
+	editor1          *widget.Editor
+	editor2          *widget.Editor
+	file1Path        string
+	file2Path        string
+	window           *app.Window
 }
 
-func generate(file1, file2 string) {
-	subtitles1, err := srt.ReadSRTFile(file1)
-	if err != nil {
-		fmt.Println("Error reading first SRT file:", err)
-		return
-	}
-	subtitles2, err := srt.ReadSRTFile(file2)
-	if err != nil {
-		fmt.Println("Error reading secod SRT file:", err)
-		return
-	}
+func main() {
+	ui := NewUI()
 
-	// Create the XLSX file
-	filePath := dialog.GetSavePath("Save file")
-	outputFile, err := os.Create(filePath)
-	if err != nil {
-		fmt.Println("Error creating XLSX file:", err)
-		return
-	}
-	defer outputFile.Close()
-
-	file := excelize.NewFile()
-	defer func() {
-		if err := file.Close(); err != nil {
-			fmt.Println(err)
+	go func() {
+		// Crea la finestra
+		w := new(app.Window)
+		ui.window = w
+		if err := ui.Run(w); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
 		}
+		os.Exit(0)
 	}()
-	sheet := "Sheet1"
-	index, err := file.NewSheet(sheet)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 
-	maxLength := len(subtitles1)
-	if len(subtitles2) > maxLength {
-		maxLength = len(subtitles2)
-	}
+	app.Main()
+}
 
-	// Writes the first row of the table
-	file.SetCellValue(sheet, "A1", "Index")
-	file.SetCellValue(sheet, "B1", "Timing")
-	file.SetCellValue(sheet, "C1", "File1")
-	file.SetCellValue(sheet, "D1", "File2")
-	// Writes the table rows
-	for i := 0; i < maxLength; i++ {
-		var subtitle1, subtitle2 srt.Subtitle
-		if i < len(subtitles1) {
-			subtitle1 = subtitles1[i]
+func NewUI() *UI {
+	ui := &UI{
+		th:               material.NewTheme(),
+		file1ButtonOp:    new(widget.Clickable),
+		file2ButtonOp:    new(widget.Clickable),
+		generateButtonOp: new(widget.Clickable),
+		editor1:          &widget.Editor{ReadOnly: true, Submit: true, SingleLine: false},
+		editor2:          &widget.Editor{ReadOnly: true, Submit: true, SingleLine: false},
+	}
+	return ui
+}
+
+func (ui *UI) Run(w *app.Window) error {
+	var ops op.Ops
+	var locked bool
+	for {
+		e := w.Event()
+		switch e := e.(type) {
+		case app.DestroyEvent:
+			return e.Err
+		case app.FrameEvent:
+			gtx := app.NewContext(&ops, e)
+
+			// Gestisci i pulsanti e memorizza se sono stati premuti
+			file1Clicked := ui.file1ButtonOp.Clicked(gtx)
+			file2Clicked := ui.file2ButtonOp.Clicked(gtx)
+			generateClicked := ui.generateButtonOp.Clicked(gtx)
+
+			// Disegna l'interfaccia
+			ui.Layout(gtx)
+
+			// Elabora gli eventi dopo aver disegnato l'interfaccia
+			if file1Clicked {
+				go ui.openFile1Dialog(&locked)
+			}
+
+			if file2Clicked {
+				go ui.openFile2Dialog(&locked)
+			}
+
+			if generateClicked {
+				go ui.generateExcel(&locked)
+			}
+
+			e.Frame(gtx.Ops)
 		}
-		if i < len(subtitles2) {
-			subtitle2 = subtitles2[i]
-		}
-		a := "A" + fmt.Sprint(i+2)
-		b := "B" + fmt.Sprint(i+2)
-		c := "C" + fmt.Sprint(i+2)
-		d := "D" + fmt.Sprint(i+2)
-		file.SetCellValue(sheet, a, subtitle1.Index)
-		file.SetCellValue(sheet, b, subtitle1.Start+" --->\n "+subtitle1.End)
-		file.SetCellValue(sheet, c, subtitle1.Text)
-		file.SetCellValue(sheet, d, subtitle2.Text)
+	}
+}
 
+func (ui *UI) Layout(gtx layout.Context) layout.Dimensions {
+	return layout.Flex{Axis: layout.Vertical}.Layout(
+		gtx,
+		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+			return layout.Flex{Axis: layout.Horizontal}.Layout(
+				gtx,
+				layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+					return layout.Flex{Axis: layout.Vertical}.Layout(
+						gtx,
+						layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+							return layout.UniformInset(unit.Dp(5)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+								border := widget.Border{
+									Color: color.NRGBA{R: 200, G: 200, B: 200, A: 255},
+									Width: unit.Dp(1),
+								}
+								return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+									return material.Editor(ui.th, ui.editor1, "").Layout(gtx)
+								})
+							})
+						}),
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							button := material.Button(ui.th, ui.file1ButtonOp, "File1")
+							button.TextSize = unit.Sp(14)
+							return layout.UniformInset(unit.Dp(5)).Layout(gtx, button.Layout)
+						}),
+					)
+				}),
+				layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+					return layout.Flex{Axis: layout.Vertical}.Layout(
+						gtx,
+						layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+							return layout.UniformInset(unit.Dp(5)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+								border := widget.Border{
+									Color: color.NRGBA{R: 200, G: 200, B: 200, A: 255},
+									Width: unit.Dp(1),
+								}
+								return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+									return material.Editor(ui.th, ui.editor2, "").Layout(gtx)
+								})
+							})
+						}),
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							button := material.Button(ui.th, ui.file2ButtonOp, "File2")
+							button.TextSize = unit.Sp(14)
+							return layout.UniformInset(unit.Dp(5)).Layout(gtx, button.Layout)
+						}),
+					)
+				}),
+			)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			button := material.Button(ui.th, ui.generateButtonOp, "Generate")
+			button.TextSize = unit.Sp(14)
+			return layout.UniformInset(unit.Dp(10)).Layout(gtx, button.Layout)
+		}),
+	)
+}
+
+func (ui *UI) openFile1Dialog(locked *bool) {
+	if !*locked {
+		*locked = true
+		defer func() {
+			*locked = false
+			ui.window.Invalidate()
+		}()
+		// Usa il tuo package dialog esistente
+		filePath := dialog.SelectFile("Open File1")
+		ui.file1Path = filePath
+
+		// Leggi il contenuto del file
+		content, err := os.ReadFile(filePath)
+		if err != nil {
+			fmt.Println("Error reading file:", err)
+			return
+		}
+
+		ui.editor1.SetText(string(content))
 	}
-	file.SetActiveSheet(index)
-	// Writes the line to the XLSX file
-	if err := file.SaveAs(filePath); err != nil {
-		fmt.Println(err)
+}
+
+func (ui *UI) openFile2Dialog(locked *bool) {
+	if !*locked {
+		*locked = true
+		defer func() {
+			*locked = false
+			ui.window.Invalidate()
+		}()
+		// Usa il tuo package dialog esistente
+		filePath := dialog.SelectFile("Open File2")
+		ui.file2Path = filePath
+
+		content, err := os.ReadFile(filePath)
+		if err != nil {
+			fmt.Println("Error reading file:", err)
+			return
+		}
+
+		ui.editor2.SetText(string(content))
 	}
-	zenity.Info("File generated successfully", zenity.Title(APPTITLE), zenity.NoIcon)
+}
+
+func (ui *UI) generateExcel(locked *bool) {
+	if !*locked {
+		*locked = true
+		if ui.file1Path == "" || ui.file2Path == "" {
+			zenity.Error("Please select both files first", zenity.Title(APPTITLE))
+			return
+		}
+
+		subtitles1, err := srt.ReadSRTFile(ui.file1Path)
+		if err != nil {
+			zenity.Error(fmt.Sprintf("Error reading first SRT file: %v", err), zenity.Title(APPTITLE))
+			return
+		}
+
+		subtitles2, err := srt.ReadSRTFile(ui.file2Path)
+		if err != nil {
+			zenity.Error(fmt.Sprintf("Error reading second SRT file: %v", err), zenity.Title(APPTITLE))
+			return
+		}
+
+		// Usa il tuo package dialog esistente per il salvataggio
+		filePath := dialog.GetSavePath("Save file")
+		if filePath == "" {
+			return
+		}
+
+		// Crea il file XLSX
+		outputFile, err := os.Create(filePath)
+		if err != nil {
+			zenity.Error(fmt.Sprintf("Error creating XLSX file: %v", err), zenity.Title(APPTITLE))
+			return
+		}
+		defer outputFile.Close()
+
+		file := excelize.NewFile()
+		defer func() {
+			if err := file.Close(); err != nil {
+				fmt.Println(err)
+			}
+			*locked = false
+		}()
+
+		sheet := "Sheet1"
+		index, err := file.NewSheet(sheet)
+		if err != nil {
+			zenity.Error(fmt.Sprintf("Error creating sheet: %v", err), zenity.Title(APPTITLE))
+			return
+		}
+
+		maxLength := len(subtitles1)
+		if len(subtitles2) > maxLength {
+			maxLength = len(subtitles2)
+		}
+
+		// Scrive la prima riga della tabella
+		file.SetCellValue(sheet, "A1", "Index")
+		file.SetCellValue(sheet, "B1", "Timing")
+		file.SetCellValue(sheet, "C1", "File1")
+		file.SetCellValue(sheet, "D1", "File2")
+
+		// Scrive le righe della tabella
+		for i := 0; i < maxLength; i++ {
+			var subtitle1, subtitle2 srt.Subtitle
+			if i < len(subtitles1) {
+				subtitle1 = subtitles1[i]
+			}
+			if i < len(subtitles2) {
+				subtitle2 = subtitles2[i]
+			}
+			a := "A" + fmt.Sprint(i+2)
+			b := "B" + fmt.Sprint(i+2)
+			c := "C" + fmt.Sprint(i+2)
+			d := "D" + fmt.Sprint(i+2)
+			file.SetCellValue(sheet, a, subtitle1.Index)
+			file.SetCellValue(sheet, b, subtitle1.Start+" --->\n "+subtitle1.End)
+			file.SetCellValue(sheet, c, subtitle1.Text)
+			file.SetCellValue(sheet, d, subtitle2.Text)
+		}
+
+		file.SetActiveSheet(index)
+
+		// Salva il file XLSX
+		if err := file.SaveAs(filePath); err != nil {
+			zenity.Error(fmt.Sprintf("Error saving file: %v", err), zenity.Title(APPTITLE))
+			return
+		}
+
+		zenity.Info("File generated successfully", zenity.Title(APPTITLE), zenity.NoIcon)
+	}
 	os.Exit(0)
 }
