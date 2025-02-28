@@ -37,8 +37,9 @@ func main() {
 	ui := NewUI()
 
 	go func() {
-		// Crea la finestra
+		// Build the window
 		w := new(app.Window)
+		w.Option(app.Title(APPTITLE))
 		ui.window = w
 		if err := ui.Run(w); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -73,15 +74,13 @@ func (ui *UI) Run(w *app.Window) error {
 		case app.FrameEvent:
 			gtx := app.NewContext(&ops, e)
 
-			// Gestisci i pulsanti e memorizza se sono stati premuti
+			// Save if buttons were clicked
 			file1Clicked := ui.file1ButtonOp.Clicked(gtx)
 			file2Clicked := ui.file2ButtonOp.Clicked(gtx)
 			generateClicked := ui.generateButtonOp.Clicked(gtx)
 
-			// Disegna l'interfaccia
 			ui.Layout(gtx)
 
-			// Elabora gli eventi dopo aver disegnato l'interfaccia
 			if file1Clicked {
 				go ui.openFile1Dialog(&locked)
 			}
@@ -164,11 +163,10 @@ func (ui *UI) openFile1Dialog(locked *bool) {
 			*locked = false
 			ui.window.Invalidate()
 		}()
-		// Usa il tuo package dialog esistente
+
 		filePath := dialog.SelectFile("Open File1")
 		ui.file1Path = filePath
 
-		// Leggi il contenuto del file
 		content, err := os.ReadFile(filePath)
 		if err != nil {
 			fmt.Println("Error reading file:", err)
@@ -186,7 +184,7 @@ func (ui *UI) openFile2Dialog(locked *bool) {
 			*locked = false
 			ui.window.Invalidate()
 		}()
-		// Usa il tuo package dialog esistente
+
 		filePath := dialog.SelectFile("Open File2")
 		ui.file2Path = filePath
 
@@ -220,13 +218,11 @@ func (ui *UI) generateExcel(locked *bool) {
 			return
 		}
 
-		// Usa il tuo package dialog esistente per il salvataggio
 		filePath := dialog.GetSavePath("Save file")
 		if filePath == "" {
 			return
 		}
 
-		// Crea il file XLSX
 		outputFile, err := os.Create(filePath)
 		if err != nil {
 			zenity.Error(fmt.Sprintf("Error creating XLSX file: %v", err), zenity.Title(APPTITLE))
@@ -254,13 +250,11 @@ func (ui *UI) generateExcel(locked *bool) {
 			maxLength = len(subtitles2)
 		}
 
-		// Scrive la prima riga della tabella
 		file.SetCellValue(sheet, "A1", "Index")
 		file.SetCellValue(sheet, "B1", "Timing")
 		file.SetCellValue(sheet, "C1", "File1")
 		file.SetCellValue(sheet, "D1", "File2")
 
-		// Scrive le righe della tabella
 		for i := 0; i < maxLength; i++ {
 			var subtitle1, subtitle2 srt.Subtitle
 			if i < len(subtitles1) {
@@ -281,7 +275,6 @@ func (ui *UI) generateExcel(locked *bool) {
 
 		file.SetActiveSheet(index)
 
-		// Salva il file XLSX
 		if err := file.SaveAs(filePath); err != nil {
 			zenity.Error(fmt.Sprintf("Error saving file: %v", err), zenity.Title(APPTITLE))
 			return
