@@ -64,7 +64,7 @@ GOOS=windows go build -ldflags="-H windowsgui"
 ## Dependencies
 
 - [zenity](https://github.com/ncruces/zenity) - Dialogs for Golang, Windows and macOS
-- [gioui](https://gioui.or) - Cross-Platform GUI for Go
+- [gioui](https://gioui.org) - Cross-Platform GUI for Go
 - [excelize](https://github.com/qax-os/excelize) - Excel file manipulation
 
 ## Contributing
