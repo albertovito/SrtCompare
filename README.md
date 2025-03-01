@@ -1,11 +1,11 @@
 # SrtCompare
 
-SrtCompare is a Windows desktop application written in Go that helps you compare subtitle files (.srt) in different languages by generating an Excel spreadsheet for easy comparison.
+SrtCompare is a cross platform desktop application written in Go that helps you compare subtitle files (.srt) in different languages by generating an Excel spreadsheet for easy comparison.
 
 ## Features
 
 - Compare two .srt files side by side in an Excel spreadsheet
-- Windows native UI built with the Walk library
+- Cross Platform
 - Simple and intuitive interface
 - Generates structured output with subtitle index, timing, and content from both files
 
@@ -26,7 +26,10 @@ SrtCompare is a Windows desktop application written in Go that helps you compare
    - File1: Content from the first subtitle file
    - File2: Content from the second subtitle file
 
-![Screen](./res/SrtCompare_screen.png)
+### Windows
+![Screen](./res/screen_win.png)
+### Linux
+![Screen](./res/screen_linux.png)
 ## Generated Excel Format
 
 The output Excel file will have the following structure:
@@ -40,7 +43,6 @@ The output Excel file will have the following structure:
 
 Requirements:
 - Go 1.23 or higher
-- Windows OS (the Walk library is Windows-only)
 
 ```bash
 # Clone the repository
@@ -52,14 +54,17 @@ cd SrtCompare
 # Install dependencies
 go mod download
 
-# Build the project
-go build -ldflags="-H windowsgui"
+# Build the project for linux
+GOOS=linux go build -o SrtCompare main.go
+
+# Build the project for windows
+GOOS=windows go build -ldflags="-H windowsgui"
 ```
 
 ## Dependencies
 
 - [zenity](https://github.com/ncruces/zenity) - Dialogs for Golang, Windows and macOS
-- [walk](https://github.com/lxn/walk) - Windows GUI toolkit
+- [gioui](https://gioui.or) - Cross-Platform GUI for Go
 - [excelize](https://github.com/qax-os/excelize) - Excel file manipulation
 
 ## Contributing
