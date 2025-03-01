@@ -84,66 +84,73 @@ func (ui *UI) Run(w *app.Window) error {
 	}
 }
 
+// Creates the main window layout
 func (ui *UI) Layout(gtx layout.Context) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(
 		gtx,
-		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-			return layout.Flex{Axis: layout.Horizontal}.Layout(
-				gtx,
-				layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-					return layout.Flex{Axis: layout.Vertical}.Layout(
-						gtx,
-						layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-							return layout.UniformInset(unit.Dp(5)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-								border := widget.Border{
-									Color: color.NRGBA{R: 200, G: 200, B: 200, A: 255},
-									Width: unit.Dp(1),
-								}
-								return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-									return material.List(ui.th, ui.list1).Layout(gtx, 1, func(gtx layout.Context, index int) layout.Dimensions {
-										return material.Editor(ui.th, ui.editor1, "").Layout(gtx)
-									})
-								})
-							})
-						}),
-						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-							button := material.Button(ui.th, ui.file1ButtonOp, "File1")
-							button.TextSize = unit.Sp(14)
-							return layout.UniformInset(unit.Dp(5)).Layout(gtx, button.Layout)
-						}),
-					)
-				}),
-				layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-					return layout.Flex{Axis: layout.Vertical}.Layout(
-						gtx,
-						layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-							return layout.UniformInset(unit.Dp(5)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-								border := widget.Border{
-									Color: color.NRGBA{R: 200, G: 200, B: 200, A: 255},
-									Width: unit.Dp(1),
-								}
-								return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-									return material.List(ui.th, ui.list2).Layout(gtx, 1, func(gtx layout.Context, index int) layout.Dimensions {
-										return material.Editor(ui.th, ui.editor2, "").Layout(gtx)
-									})
-								})
-							})
-						}),
-						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-							button := material.Button(ui.th, ui.file2ButtonOp, "File2")
-							button.TextSize = unit.Sp(14)
-							return layout.UniformInset(unit.Dp(5)).Layout(gtx, button.Layout)
-						}),
-					)
-				}),
-			)
-		}),
-		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			button := material.Button(ui.th, ui.generateButtonOp, "Generate")
-			button.TextSize = unit.Sp(14)
-			return layout.UniformInset(unit.Dp(5)).Layout(gtx, button.Layout)
-		}),
+		layout.Flexed(1, ui.layoutTextAreas),
+		layout.Rigid(ui.layoutGenerateButton),
 	)
+}
+
+// Displays two text areas side by side
+func (ui *UI) layoutTextAreas(gtx layout.Context) layout.Dimensions {
+	return layout.Flex{Axis: layout.Horizontal}.Layout(
+		gtx,
+		layout.Flexed(1, ui.layoutLeftPanel),
+		layout.Flexed(1, ui.layoutRightPanel),
+	)
+}
+
+// Layout fot left Panel
+func (ui *UI) layoutLeftPanel(gtx layout.Context) layout.Dimensions {
+	return layout.Flex{Axis: layout.Vertical}.Layout(
+		gtx,
+		layout.Flexed(1, ui.layoutEditor(ui.editor1, ui.list1)),
+		layout.Rigid(ui.layoutButton(ui.file1ButtonOp, "File1")),
+	)
+}
+
+// Layut for right panel
+func (ui *UI) layoutRightPanel(gtx layout.Context) layout.Dimensions {
+	return layout.Flex{Axis: layout.Vertical}.Layout(
+		gtx,
+		layout.Flexed(1, ui.layoutEditor(ui.editor2, ui.list2)),
+		layout.Rigid(ui.layoutButton(ui.file2ButtonOp, "File2")),
+	)
+}
+
+// Function that creates a reusable editor with borders
+func (ui *UI) layoutEditor(editor *widget.Editor, list *widget.List) layout.Widget {
+	return func(gtx layout.Context) layout.Dimensions {
+		return layout.UniformInset(unit.Dp(5)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+			border := widget.Border{
+				Color: color.NRGBA{R: 200, G: 200, B: 200, A: 255},
+				Width: unit.Dp(1),
+			}
+			return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+				return material.List(ui.th, list).Layout(gtx, 1, func(gtx layout.Context, index int) layout.Dimensions {
+					return material.Editor(ui.th, editor, "").Layout(gtx)
+				})
+			})
+		})
+	}
+}
+
+// Function that creates a reusable button
+func (ui *UI) layoutButton(button *widget.Clickable, text string) layout.Widget {
+	return func(gtx layout.Context) layout.Dimensions {
+		btn := material.Button(ui.th, button, text)
+		btn.TextSize = unit.Sp(14)
+		return layout.UniformInset(unit.Dp(5)).Layout(gtx, btn.Layout)
+	}
+}
+
+// Layout for generation button
+func (ui *UI) layoutGenerateButton(gtx layout.Context) layout.Dimensions {
+	button := material.Button(ui.th, ui.generateButtonOp, "Generate")
+	button.TextSize = unit.Sp(14)
+	return layout.UniformInset(unit.Dp(5)).Layout(gtx, button.Layout)
 }
 
 func (ui *UI) openFile1Dialog(locked *bool) {
