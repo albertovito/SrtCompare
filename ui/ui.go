@@ -27,6 +27,8 @@ type UI struct {
 	editor2          *widget.Editor
 	file1Path        string
 	file2Path        string
+	list1            *widget.List
+	list2            *widget.List
 	MainWindow       *app.Window
 }
 
@@ -35,10 +37,14 @@ func NewUI() *UI {
 		th:               material.NewTheme(),
 		file1ButtonOp:    new(widget.Clickable),
 		file2ButtonOp:    new(widget.Clickable),
+		list1:            new(widget.List),
+		list2:            new(widget.List),
 		generateButtonOp: new(widget.Clickable),
 		editor1:          &widget.Editor{ReadOnly: true, Submit: true, SingleLine: false},
 		editor2:          &widget.Editor{ReadOnly: true, Submit: true, SingleLine: false},
 	}
+	ui.list1.Axis = layout.Vertical
+	ui.list2.Axis = layout.Vertical
 	return ui
 }
 
@@ -93,7 +99,9 @@ func (ui *UI) Layout(gtx layout.Context) layout.Dimensions {
 									Width: unit.Dp(1),
 								}
 								return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-									return material.Editor(ui.th, ui.editor1, "").Layout(gtx)
+									return material.List(ui.th, ui.list1).Layout(gtx, 1, func(gtx layout.Context, index int) layout.Dimensions {
+										return material.Editor(ui.th, ui.editor1, "").Layout(gtx)
+									})
 								})
 							})
 						}),
@@ -114,7 +122,9 @@ func (ui *UI) Layout(gtx layout.Context) layout.Dimensions {
 									Width: unit.Dp(1),
 								}
 								return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-									return material.Editor(ui.th, ui.editor2, "").Layout(gtx)
+									return material.List(ui.th, ui.list2).Layout(gtx, 1, func(gtx layout.Context, index int) layout.Dimensions {
+										return material.Editor(ui.th, ui.editor2, "").Layout(gtx)
+									})
 								})
 							})
 						}),
