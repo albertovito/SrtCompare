@@ -25,7 +25,7 @@ func GetSavePath(titolo string) string {
 		zenity.FileFilters{
 			{Name: "File XLSX", Patterns: []string{"*.xlsx"}, CaseFold: false},
 		})
-	if !strings.Contains(filePath, ".") {
+	if !strings.Contains(filePath, ".") && filePath != "" {
 		filePath = filePath + ".xlsx"
 	}
 	return filePath
